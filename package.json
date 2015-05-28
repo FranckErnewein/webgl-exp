@@ -1,0 +1,25 @@
+{
+  "name": "webgl-exp",
+  "version": "1.0.0",
+  "description": "Webgl experiements",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FranckErnewein/webgl-exp.git"
+  },
+  "author": "Franck Ernewein",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FranckErnewein/webgl-exp/issues"
+  },
+  "homepage": "https://github.com/FranckErnewein/webgl-exp",
+  "dependencies": {
+    "browserify-shader": "0.0.2",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^3.8.0",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
