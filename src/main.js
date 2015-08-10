@@ -1,51 +1,64 @@
 var fragment = require('./fragment.glsl');
 var vertex = require('./vertex.glsl');
 
+function loadShader(gl, shaderSource, shaderType) {
+  var shader = gl.createShader(shaderType);
+
+  // Load the shader source
+  gl.shaderSource(shader, shaderSource);
+
+  // Compile the shader
+  gl.compileShader(shader);
+
+  // Check the compile status
+  var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+  if (!compiled) {
+    // Something went wrong during compilation; get the error
+    lastError = gl.getShaderInfoLog(shader);
+    console.error("*** Error compiling shader '" + shader + "':" + lastError);
+    gl.deleteShader(shader);
+    return null;
+  }
+
+  return shader;
+}
+
+
 window.onload = function init() {
-  var canvas = document.getElementById('scene');
-  var gl = canvas.getContext('webgl');
+  var canvas = document.getElementById("scene");
+  var gl = getWebGLContext(canvas);
+  if (!gl) {
+    return;
+  }
 
-  gl.viewport(0, 0, canvas.width, canvas.height);
-  gl.clearColor(0, 0, 0, 1);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  var vs = gl.createShader(gl.VERTEX_SHADER);
-  gl.shaderSource(vs, vertex());
-  gl.compileShader(vs);
-
-  var fs = gl.createShader(gl.FRAGMENT_SHADER);
-  gl.shaderSource(fs, fragment());
-  gl.compileShader(fs);
-
-  var program = gl.createProgram();
-
-  gl.attachShader(program, vs);
-  gl.attachShader(program, fs);
-  gl.linkProgram(program);
-
-  var aspect = canvas.width / canvas.height;
-
-  var vertices = new Float32Array([-0.5, 0.5 * aspect, 0.5, 0.5 * aspect, 0.5, -0.5 * aspect, -0.5, 0.5 * aspect, 0.5, -0.5 * aspect, -0.5, -0.5 * aspect]);
-
-  var vbuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, vbuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-  var itemSize = 2;
-  var numItems = vertices.length / itemSize;
-
-  console.log(program);
+  // setup GLSL program
+  vertexShader = loadShader(gl, vertex(), gl.VERTEX_SHADER);
+  fragmentShader = loadShader(gl, fragment(), gl.FRAGMENT_SHADER);
+  program = createProgram(gl, [vertexShader, fragmentShader]);
   gl.useProgram(program);
-  /*
 
-  program.uColor = gl.getUniformLocation(program, "uColor");
-  gl.uniform4fv(program.uColor, [0.0, 0.3, 0.0, 1.0]);
+  // look up where the vertex data needs to go.
+  var positionLocation = gl.getAttribLocation(program, "a_position");
 
-  program.aVertexPosition = gl.getAttribLocation(program, "aVertexPosition");
-  gl.enableVertexAttribArray(program.aVertexPosition);
-  gl.vertexAttribPointer(program.aVertexPosition, itemSize, gl.FLOAT, false, 0, 0);
+  // set the resolution
+  var resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+  gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
 
-  gl.drawArrays(gl.TRIANGLES, 0, numItems);
-  */
+  // Create a buffer and put a single clipspace rectangle in
+  // it (2 triangles)
+  var buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    10, 20,
+    80, 20,
+    10, 30,
+    10, 30,
+    80, 20,
+    80, 30
+  ]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
+  // draw
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
 };

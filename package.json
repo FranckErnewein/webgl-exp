@@ -18,8 +18,12 @@
   "homepage": "https://github.com/FranckErnewein/webgl-exp",
   "dependencies": {
     "browserify-shader": "0.0.2",
+    "glslify": "^2.2.1",
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.8.0",
     "grunt-contrib-watch": "^0.6.1"
+  },
+  "browserify": {
+    "transform": ["glslify"]
   }
 }
