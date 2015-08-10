@@ -23,7 +23,6 @@ window.onload = function init() {
   gl.attachShader(program, fs);
   gl.linkProgram(program);
 
-
   var aspect = canvas.width / canvas.height;
 
   var vertices = new Float32Array([-0.5, 0.5 * aspect, 0.5, 0.5 * aspect, 0.5, -0.5 * aspect, -0.5, 0.5 * aspect, 0.5, -0.5 * aspect, -0.5, -0.5 * aspect]);
@@ -35,8 +34,9 @@ window.onload = function init() {
   var itemSize = 2;
   var numItems = vertices.length / itemSize;
 
-  /*
+  console.log(program);
   gl.useProgram(program);
+  /*
 
   program.uColor = gl.getUniformLocation(program, "uColor");
   gl.uniform4fv(program.uColor, [0.0, 0.3, 0.0, 1.0]);
